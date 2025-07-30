@@ -121,9 +121,28 @@ class KnowledgeBaseService:
             return self._get_default_entries()
     
     def _save_entries(self, entries: List[Dict[str, Any]]):
-        """Save entries to storage."""
+        """Save entries to storage file."""
         with open(self.storage_path, 'w') as f:
-            json.dump(entries, f, indent=2, default=str)
+            json.dump(entries, f, indent=2)
+
+    def _create_entry_object(self, entry_data: Dict[str, Any]) -> KnowledgeBaseEntry:
+        """Convert dictionary data to KnowledgeBaseEntry object."""
+        return KnowledgeBaseEntry(
+            id=entry_data.get('id', ''),
+            title=entry_data.get('title', ''),
+            description=entry_data.get('description', ''),
+            category=entry_data.get('category', ''),
+            tags=entry_data.get('tags', []),
+            error_patterns=entry_data.get('error_patterns', []),
+            solution_steps=entry_data.get('solution_steps', []),
+            automated_actions=entry_data.get('automated_actions', []),
+            success_rate=entry_data.get('success_rate', 0.0),
+            related_services=entry_data.get('related_services', []),
+            last_used=datetime.fromisoformat(entry_data.get('last_used', datetime.now().isoformat())),
+            created_at=datetime.fromisoformat(entry_data.get('created_at', datetime.now().isoformat())),
+            updated_at=datetime.fromisoformat(entry_data.get('updated_at', datetime.now().isoformat())),
+            created_by=entry_data.get('created_by', 'system')
+        )
     
     async def search_similar_incidents(
         self,
@@ -236,5 +255,127 @@ class KnowledgeBaseService:
             
             self._save_entries(entries)
             return True
+        except Exception:
+            return False
+
+    async def search_entries(
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        category: Optional[str] = None,
+        search: Optional[str] = None
+    ) -> List[KnowledgeBaseEntry]:
+        """Search and list knowledge base entries with pagination and filtering."""
+        try:
+            entries_data = self._load_entries()
+            
+            # Filter by category if provided
+            if category:
+                entries_data = [e for e in entries_data if e.get('category', '').lower() == category.lower()]
+            
+            # Filter by search term if provided
+            if search:
+                search_lower = search.lower()
+                filtered_entries = []
+                for entry in entries_data:
+                    # Search in title, description, tags, and error patterns
+                    if (search_lower in entry.get('title', '').lower() or
+                        search_lower in entry.get('description', '').lower() or
+                        any(search_lower in tag.lower() for tag in entry.get('tags', [])) or
+                        any(search_lower in pattern.lower() for pattern in entry.get('error_patterns', []))):
+                        filtered_entries.append(entry)
+                entries_data = filtered_entries
+            
+            # Apply pagination
+            total_entries = len(entries_data)
+            entries_data = entries_data[skip:skip + limit]
+            
+            # Convert to KnowledgeBaseEntry objects
+            entries = []
+            for entry_data in entries_data:
+                entry = self._create_entry_object(entry_data)
+                entries.append(entry)
+            
+            return entries
+        except Exception as e:
+            # Return empty list on error
+            return []
+
+    async def create_entry(self, entry: KnowledgeBaseEntry, created_by: str) -> KnowledgeBaseEntry:
+        """Create a new knowledge base entry."""
+        # Set creation metadata
+        entry.created_by = created_by
+        entry.created_at = datetime.now()
+        entry.updated_at = datetime.now()
+        entry.last_used = datetime.now()
+        
+        # Add to storage
+        await self.add_entry(entry)
+        return entry
+
+    async def get_entry_by_id(self, entry_id: str) -> Optional[KnowledgeBaseEntry]:
+        """Get a knowledge base entry by ID."""
+        try:
+            entries_data = self._load_entries()
+            
+            for entry_data in entries_data:
+                if entry_data.get('id') == entry_id:
+                    return self._create_entry_object(entry_data)
+            
+            return None
+        except Exception:
+            return None
+
+    async def update_entry(self, entry_id: str, updated_entry: KnowledgeBaseEntry) -> Optional[KnowledgeBaseEntry]:
+        """Update an existing knowledge base entry."""
+        try:
+            entries = self._load_entries()
+            
+            for i, entry in enumerate(entries):
+                if entry['id'] == entry_id:
+                    # Preserve original creation info
+                    updated_entry.id = entry_id
+                    updated_entry.created_at = datetime.fromisoformat(entry['created_at'])
+                    updated_entry.created_by = entry['created_by']
+                    updated_entry.updated_at = datetime.now()
+                    
+                    # Convert to dict and update
+                    entries[i] = {
+                        'id': updated_entry.id,
+                        'title': updated_entry.title,
+                        'description': updated_entry.description,
+                        'category': updated_entry.category,
+                        'tags': updated_entry.tags,
+                        'error_patterns': updated_entry.error_patterns,
+                        'solution_steps': updated_entry.solution_steps,
+                        'automated_actions': updated_entry.automated_actions,
+                        'success_rate': updated_entry.success_rate,
+                        'related_services': updated_entry.related_services,
+                        'last_used': updated_entry.last_used.isoformat(),
+                        'created_at': updated_entry.created_at.isoformat(),
+                        'updated_at': updated_entry.updated_at.isoformat(),
+                        'created_by': updated_entry.created_by
+                    }
+                    
+                    self._save_entries(entries)
+                    return updated_entry
+            
+            return None
+        except Exception:
+            return None
+
+    async def delete_entry(self, entry_id: str) -> bool:
+        """Delete a knowledge base entry."""
+        try:
+            entries = self._load_entries()
+            original_count = len(entries)
+            
+            entries = [e for e in entries if e.get('id') != entry_id]
+            
+            if len(entries) < original_count:
+                self._save_entries(entries)
+                return True
+            
+            return False
         except Exception:
             return False

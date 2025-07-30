@@ -713,8 +713,7 @@ class EnhancedIncidentService:
                     """),
                     incident_data
                 )
-                # Commit the transaction
-                await session.commit()                
+                
                 logger.info("📦 INCIDENT STORED IN DB", incident_id=incident.id)
                 return  # Exit successfully
                 
@@ -759,8 +758,6 @@ class EnhancedIncidentService:
                     }
                 )
                 
-                # Commit the transaction
-                await session.commit()
                 logger.debug("📝 INCIDENT UPDATED IN DB", incident_id=incident.id)
                 return  # Exit successfully
                 

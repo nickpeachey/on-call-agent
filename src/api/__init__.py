@@ -37,8 +37,8 @@ def create_api_router() -> APIRouter:
     router.include_router(logs.router)
     
     # Include AI training endpoints
-    from . import ai_training
-    router.include_router(ai_training.router)
+    from . import simple_ai_training
+    router.include_router(simple_ai_training.router)
     
     # Include resolution monitoring
     from .resolution_monitor import create_resolution_monitor_router

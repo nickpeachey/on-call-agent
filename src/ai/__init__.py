@@ -24,7 +24,8 @@ import scipy.sparse
 import random
 
 from ..core import get_logger, settings
-from ..models.schemas import LogEntry, IncidentCreate, KnowledgeBaseEntry, ActionCreate
+from ..models.schemas import LogEntry, IncidentCreate, ActionCreate
+from ..services.knowledge_base import KnowledgeBaseEntry
 from ..services.action_logger import action_logger
 from ..database import get_db_session, Base
 from sqlalchemy.orm import Session
@@ -211,9 +212,7 @@ class AIDecisionEngine:
         """Queue an incident for AI analysis and resolution."""
         logger.info("📥 Queuing incident for AI analysis", title=incident.title)
         await self.incident_queue.put(incident)
-        logger.debug("✅ Incident queued successfully - queue size now: {} - loop running: {}".format(
-            self.incident_queue.qsize(), self.is_running
-        ))
+        logger.debug("✅ Incident queued successfully", queue_size=self.incident_queue.qsize(), loop_running=self.is_running)
     
     async def _process_incident(self, incident: IncidentCreate):
         """Process an incident and determine appropriate actions."""
@@ -856,12 +855,29 @@ class AIDecisionEngine:
         # Generate recommended actions
         recommended_actions = []
         
+        # Import ActionType for mapping
+        from ..models.schemas import ActionType
+        
         for kb_entry in kb_matches:
             for auto_action in kb_entry.automated_actions:
+                # auto_action is a string, try to map to ActionType
+                action_type = None
+                action_str = auto_action if isinstance(auto_action, str) else str(auto_action)
+                
+                # Try to find matching ActionType
+                for action_enum in ActionType:
+                    if action_str.lower() in action_enum.value.lower() or action_enum.value.lower() in action_str.lower():
+                        action_type = action_enum
+                        break
+                
+                # Default to a generic action type if no match
+                if action_type is None:
+                    action_type = ActionType.RESTART_SERVICE  # Default fallback
+                
                 action = ActionCreate(
-                    action_type=auto_action.action_type,
-                    parameters=auto_action.parameters,
-                    timeout_seconds=auto_action.timeout_seconds,
+                    action_type=action_type,
+                    parameters={},
+                    timeout_seconds=300,
                     incident_id=None  # Will be set when incident is created
                 )
                 recommended_actions.append(action)

@@ -1,0 +1,57 @@
+{
+  "overall_success": true,
+  "total_tests": 8,
+  "passed_tests": 8,
+  "success_rate": 100.0,
+  "execution_time_seconds": 105.29437208175659,
+  "test_results": [
+    {
+      "test_name": "Docker Files Exist",
+      "success": true,
+      "message": "Found 4/4 required files",
+      "timestamp": "2025-07-30T15:28:43.313015"
+    },
+    {
+      "test_name": "Docker Compose Syntax",
+      "success": true,
+      "message": "Docker compose syntax is valid",
+      "timestamp": "2025-07-30T15:28:43.353886"
+    },
+    {
+      "test_name": "Environment File",
+      "success": true,
+      "message": ".env file already exists",
+      "timestamp": "2025-07-30T15:28:43.353967"
+    },
+    {
+      "test_name": "Docker Build",
+      "success": true,
+      "message": "Docker image built successfully",
+      "timestamp": "2025-07-30T15:30:01.028569"
+    },
+    {
+      "test_name": "Docker Services Start",
+      "success": true,
+      "message": "Docker services started successfully (8 services running)",
+      "timestamp": "2025-07-30T15:30:19.066477"
+    },
+    {
+      "test_name": "Application Health",
+      "success": true,
+      "message": "Application healthy (attempt 1)",
+      "timestamp": "2025-07-30T15:30:24.085689"
+    },
+    {
+      "test_name": "API Endpoints",
+      "success": true,
+      "message": "Accessible endpoints: 2/2",
+      "timestamp": "2025-07-30T15:30:24.089879"
+    },
+    {
+      "test_name": "Docker Cleanup",
+      "success": true,
+      "message": "Docker cleanup completed",
+      "timestamp": "2025-07-30T15:30:28.607197"
+    }
+  ]
+}
