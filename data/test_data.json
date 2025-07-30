@@ -1,0 +1,113 @@
+[
+  {
+    "incident": {
+      "title": "MySQL Connection Pool Exhausted",
+      "description": "MySQL connection pool has no available connections. Timeout after 30 seconds.",
+      "service": "mysql", 
+      "severity": "high",
+      "tags": ["database", "mysql", "connection"]
+    },
+    "expected_category": "database_connectivity",
+    "expected_success": true
+  },
+  {
+    "incident": {
+      "title": "Spark Driver OutOfMemory",
+      "description": "Spark driver process failed with java.lang.OutOfMemoryError during large dataset processing",
+      "service": "spark",
+      "severity": "high",
+      "tags": ["spark", "memory", "driver"]
+    },
+    "expected_category": "memory_issues", 
+    "expected_success": true
+  },
+  {
+    "incident": {
+      "title": "ETL Pipeline Stuck",
+      "description": "Airflow DAG 'daily-etl-pipeline' has been running for 3 hours without progress",
+      "service": "airflow",
+      "severity": "medium",
+      "tags": ["etl", "airflow", "pipeline"]
+    },
+    "expected_category": "workflow_failure",
+    "expected_success": true
+  },
+  {
+    "incident": {
+      "title": "Data File Missing",
+      "description": "Required input file data/sales/2024-01-15.csv not found for processing job",
+      "service": "data-pipeline",
+      "severity": "medium", 
+      "tags": ["file", "data", "missing"]
+    },
+    "expected_category": "data_availability",
+    "expected_success": false
+  },
+  {
+    "incident": {
+      "title": "Load Balancer Health Check Failed",
+      "description": "Health check failing for backend service. All instances marked unhealthy.",
+      "service": "load-balancer",
+      "severity": "critical",
+      "tags": ["health-check", "load-balancer", "backend"]
+    },
+    "expected_category": "unknown",
+    "expected_success": false
+  },
+  {
+    "incident": {
+      "title": "Kubernetes Pod CrashLoopBackOff",
+      "description": "Pod web-service-7f8b9d-xyz in CrashLoopBackOff state. Container exits with code 1.",
+      "service": "kubernetes",
+      "severity": "high",
+      "tags": ["kubernetes", "pod", "crash"]
+    },
+    "expected_category": "unknown",
+    "expected_success": true
+  },
+  {
+    "incident": {
+      "title": "Cache Miss Rate High",
+      "description": "Redis cache miss rate at 85% for user session data. Performance degraded.",
+      "service": "redis",
+      "severity": "medium",
+      "tags": ["cache", "performance", "redis"]
+    },
+    "expected_category": "unknown",
+    "expected_success": true
+  },
+  {
+    "incident": {
+      "title": "Database Query Timeout",
+      "description": "PostgreSQL query taking >60 seconds on users table. Lock detected.",
+      "service": "postgres",
+      "severity": "high",
+      "tags": ["database", "query", "timeout"]
+    },
+    "expected_category": "database_connectivity",
+    "expected_success": true
+  },
+  {
+    "incident": {
+      "title": "Executor Lost in Spark Job",
+      "description": "YARN killed Spark executor due to memory usage exceeding 8GB limit",
+      "service": "spark",
+      "severity": "high",
+      "tags": ["spark", "executor", "memory"]
+    },
+    "expected_category": "memory_issues",
+    "expected_success": true
+  },
+  {
+    "incident": {
+      "title": "Sensor Data Stream Interrupted",
+      "description": "IoT sensor data stream from factory floor stopped 2 hours ago. No data received.",
+      "service": "iot-gateway",
+      "severity": "medium",
+      "tags": ["iot", "sensor", "stream"]
+    },
+    "expected_category": "data_availability",
+    "expected_success": false,
+    "is_anomaly": true
+  }
+]

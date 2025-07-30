@@ -1,0 +1,34 @@
+{
+  "mode": "dev",
+  "app": {
+    "name": "AI On-Call Agent",
+    "version": "1.0.0",
+    "debug": true,
+    "host": "localhost",
+    "port": 8000
+  },
+  "database": {
+    "url": "sqlite:///./data/oncall_agent.db",
+    "echo": true
+  },
+  "redis": {
+    "url": "redis://localhost:6379/0",
+    "decode_responses": true
+  },
+  "logging": {
+    "level": "DEBUG",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file": "logs/oncall_agent.log"
+  },
+  "ai": {
+    "openai_api_key": "your-openai-api-key-here",
+    "model": "gpt-3.5-turbo",
+    "max_tokens": 1000,
+    "temperature": 0.3
+  },
+  "monitoring": {
+    "poll_interval": 60,
+    "alert_threshold": 5,
+    "max_retries": 3
+  }
+}

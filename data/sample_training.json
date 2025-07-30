@@ -1,0 +1,654 @@
+[
+  {
+    "incident_type": "airflow_task_failure",
+    "description": "Airflow DAG 'data_pipeline' task 'extract_data' failed",
+    "context": {
+      "service": "airflow",
+      "severity": "high",
+      "dag_id": "data_pipeline",
+      "task_id": "extract_data",
+      "error_message": "Task failed with exit code 1"
+    },
+    "resolution_action": {
+      "action_type": "restart_airflow_task",
+      "parameters": {
+        "dag_id": "data_pipeline",
+        "task_id": "extract_data",
+        "clear_downstream": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.95,
+      "time_to_resolution": 120,
+      "learned_patterns": [
+        "airflow.*failed",
+        "task.*extract_data"
+      ]
+    }
+  },
+  {
+    "incident_type": "spark_application_failure",
+    "description": "Spark application failed due to executor lost",
+    "context": {
+      "service": "spark",
+      "severity": "high",
+      "application_id": "app-20240730120000-0001",
+      "error_message": "Spark executor lost: Worker lost contact"
+    },
+    "resolution_action": {
+      "action_type": "restart_spark_job",
+      "parameters": {
+        "application_id": "app-20240730120000-0001",
+        "force_kill": true,
+        "memory_config": {
+          "driver_memory": "4g",
+          "executor_memory": "8g"
+        }
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.88,
+      "time_to_resolution": 180,
+      "learned_patterns": [
+        "spark.*failed",
+        "executor.*lost"
+      ]
+    }
+  },
+  {
+    "incident_type": "api_server_error",
+    "description": "HTTP 500 errors from web API service",
+    "context": {
+      "service": "web-api",
+      "severity": "medium",
+      "error_code": "500",
+      "error_rate": "15%"
+    },
+    "resolution_action": {
+      "action_type": "restart_service",
+      "parameters": {
+        "service_name": "web-api",
+        "graceful": true,
+        "wait_time": 30
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.82,
+      "time_to_resolution": 90,
+      "learned_patterns": [
+        "HTTP.*5\\d\\d",
+        "web-api.*error"
+      ]
+    }
+  },
+  {
+    "incident_type": "cache_service_failure",
+    "description": "Redis connection timeout errors",
+    "context": {
+      "service": "redis",
+      "severity": "medium",
+      "error_message": "Connection timeout after 5000ms"
+    },
+    "resolution_action": {
+      "action_type": "clear_cache",
+      "parameters": {
+        "cache_type": "redis",
+        "flush_all": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.78,
+      "time_to_resolution": 60,
+      "learned_patterns": [
+        "redis.*timeout",
+        "connection.*timeout"
+      ]
+    }
+  },
+  {
+    "incident_type": "file_not_found_error",
+    "description": "Critical data file missing from processing pipeline",
+    "context": {
+      "service": "etl-pipeline",
+      "severity": "high",
+      "file_path": "/data/input.csv",
+      "error_message": "FileNotFoundError: [Errno 2] No such file or directory"
+    },
+    "resolution_action": {
+      "action_type": "restart_airflow_dag",
+      "parameters": {
+        "dag_id": "data_pipeline",
+        "reset_dag_run": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.91,
+      "time_to_resolution": 150,
+      "learned_patterns": [
+        "FileNotFoundError",
+        "No such file"
+      ]
+    }
+  },
+  {
+    "incident_type": "database_connection_pool_exhausted",
+    "description": "PostgreSQL connection pool exhausted",
+    "context": {
+      "service": "postgres",
+      "severity": "high",
+      "pool_size": "50",
+      "active_connections": "50"
+    },
+    "resolution_action": {
+      "action_type": "restart_database_connection",
+      "parameters": {
+        "database_type": "postgresql",
+        "pool_size": 75
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.93,
+      "time_to_resolution": 45,
+      "learned_patterns": [
+        "connection.*pool.*exhausted",
+        "postgresql"
+      ]
+    }
+  },
+  {
+    "incident_type": "out_of_memory_error",
+    "description": "Java heap space exhausted in Spark driver",
+    "context": {
+      "service": "spark",
+      "severity": "critical",
+      "error_message": "java.lang.OutOfMemoryError: Java heap space",
+      "memory_usage": "98%"
+    },
+    "resolution_action": {
+      "action_type": "restart_spark_job",
+      "parameters": {
+        "application_id": "current",
+        "driver_memory": "8g",
+        "executor_memory": "12g"
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.89,
+      "time_to_resolution": 240,
+      "learned_patterns": [
+        "OutOfMemoryError",
+        "heap space"
+      ]
+    }
+  },
+  {
+    "incident_type": "high_memory_usage",
+    "description": "Web API service using 95% memory",
+    "context": {
+      "service": "web-api",
+      "severity": "medium",
+      "memory_usage": "95%",
+      "threshold": "85%"
+    },
+    "resolution_action": {
+      "action_type": "restart_service",
+      "parameters": {
+        "service_name": "web-api",
+        "graceful": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.86,
+      "time_to_resolution": 75,
+      "learned_patterns": [
+        "memory.*9[0-9]%",
+        "high memory usage"
+      ]
+    }
+  },
+  {
+    "incident_type": "mysql_connection_timeout",
+    "description": "MySQL database connection timeouts",
+    "context": {
+      "service": "mysql",
+      "severity": "medium",
+      "error_message": "Connection timed out after 30 seconds"
+    },
+    "resolution_action": {
+      "action_type": "restart_database_connection",
+      "parameters": {
+        "database_type": "mysql",
+        "timeout": 60
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.84,
+      "time_to_resolution": 90,
+      "learned_patterns": [
+        "mysql.*timeout",
+        "Connection timed out"
+      ]
+    }
+  },
+  {
+    "incident_type": "mongodb_replica_lag",
+    "description": "MongoDB replica set showing high replication lag",
+    "context": {
+      "service": "mongodb",
+      "severity": "medium",
+      "replication_lag": "15 seconds",
+      "threshold": "5 seconds"
+    },
+    "resolution_action": {
+      "action_type": "restart_database_connection",
+      "parameters": {
+        "database_type": "mongodb",
+        "replica_set": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.87,
+      "time_to_resolution": 120,
+      "learned_patterns": [
+        "replica.*lag",
+        "replication.*lag"
+      ]
+    }
+  },
+  {
+    "incident_type": "network_connectivity_failure",
+    "description": "External API calls failing with connection refused",
+    "context": {
+      "service": "api-gateway",
+      "severity": "high",
+      "error_message": "Connection refused to external-api.com:443",
+      "failure_rate": "80%"
+    },
+    "resolution_action": {
+      "action_type": "restart_service",
+      "parameters": {
+        "service_name": "api-gateway",
+        "clear_dns_cache": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.79,
+      "time_to_resolution": 180,
+      "learned_patterns": [
+        "Connection refused",
+        "network.*failure"
+      ]
+    }
+  },
+  {
+    "incident_type": "disk_space_full",
+    "description": "Application server disk usage at 98%",
+    "context": {
+      "service": "app-server",
+      "severity": "critical",
+      "disk_usage": "98%",
+      "available_space": "500MB"
+    },
+    "resolution_action": {
+      "action_type": "clear_cache",
+      "parameters": {
+        "cache_type": "filesystem",
+        "path": "/tmp/app_cache"
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.94,
+      "time_to_resolution": 30,
+      "learned_patterns": [
+        "disk.*9[0-9]%",
+        "space.*full"
+      ]
+    }
+  },
+  {
+    "incident_type": "slow_database_queries",
+    "description": "Database queries taking over 10 seconds",
+    "context": {
+      "service": "postgres",
+      "severity": "medium",
+      "query_time": "12.5 seconds",
+      "threshold": "5 seconds"
+    },
+    "resolution_action": {
+      "action_type": "optimize_database",
+      "parameters": {
+        "database_type": "postgresql",
+        "analyze_tables": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.81,
+      "time_to_resolution": 300,
+      "learned_patterns": [
+        "slow.*quer",
+        "taking.*[0-9]+.*seconds"
+      ]
+    }
+  },
+  {
+    "incident_type": "ssl_certificate_expired",
+    "description": "SSL certificate expired for API endpoint",
+    "context": {
+      "service": "web-api",
+      "severity": "high",
+      "error_message": "SSL certificate expired",
+      "expiry_date": "2024-07-29"
+    },
+    "resolution_action": {
+      "action_type": "renew_ssl_certificate",
+      "parameters": {
+        "domain": "api.example.com",
+        "auto_deploy": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.97,
+      "time_to_resolution": 600,
+      "learned_patterns": [
+        "SSL.*expired",
+        "certificate.*expired"
+      ]
+    }
+  },
+  {
+    "incident_type": "load_balancer_health_check_failure",
+    "description": "Load balancer health checks failing for web servers",
+    "context": {
+      "service": "load-balancer",
+      "severity": "high",
+      "healthy_instances": "1",
+      "total_instances": "4"
+    },
+    "resolution_action": {
+      "action_type": "restart_service",
+      "parameters": {
+        "service_name": "web-server",
+        "instances": "all"
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.88,
+      "time_to_resolution": 240,
+      "learned_patterns": [
+        "health.*check.*fail",
+        "load.*balancer"
+      ]
+    }
+  },
+  {
+    "incident_type": "cascading_service_failure",
+    "description": "Database failure causing multiple service outages",
+    "context": {
+      "service": "multi-service",
+      "severity": "critical",
+      "affected_services": [
+        "web-api",
+        "auth-service",
+        "user-service"
+      ],
+      "root_cause": "database_connection_failure"
+    },
+    "resolution_action": {
+      "action_type": "restart_database_and_dependent_services",
+      "parameters": {
+        "database_type": "postgresql",
+        "dependent_services": [
+          "web-api",
+          "auth-service",
+          "user-service"
+        ],
+        "restart_order": [
+          "database",
+          "auth-service",
+          "web-api",
+          "user-service"
+        ]
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.92,
+      "time_to_resolution": 450,
+      "learned_patterns": [
+        "cascading.*failure",
+        "multiple.*service"
+      ]
+    }
+  },
+  {
+    "incident_type": "kubernetes_pod_crashloop",
+    "description": "Kubernetes pods in CrashLoopBackOff state",
+    "context": {
+      "service": "kubernetes",
+      "severity": "high",
+      "pod_status": "CrashLoopBackOff",
+      "restart_count": "15"
+    },
+    "resolution_action": {
+      "action_type": "restart_kubernetes_deployment",
+      "parameters": {
+        "namespace": "production",
+        "deployment": "web-api",
+        "force_recreate": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.85,
+      "time_to_resolution": 180,
+      "learned_patterns": [
+        "CrashLoopBackOff",
+        "pod.*crash"
+      ]
+    }
+  },
+  {
+    "incident_type": "message_queue_backup",
+    "description": "RabbitMQ message queue backing up with 100k+ messages",
+    "context": {
+      "service": "rabbitmq",
+      "severity": "high",
+      "queue_size": "125000",
+      "processing_rate": "slow"
+    },
+    "resolution_action": {
+      "action_type": "scale_message_consumers",
+      "parameters": {
+        "queue_name": "processing_queue",
+        "consumer_count": 10
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.89,
+      "time_to_resolution": 300,
+      "learned_patterns": [
+        "queue.*back",
+        "message.*queue.*[0-9]+k"
+      ]
+    }
+  },
+  {
+    "incident_type": "microservice_circuit_breaker_open",
+    "description": "Circuit breaker open for payment service",
+    "context": {
+      "service": "payment-service",
+      "severity": "critical",
+      "circuit_breaker_state": "OPEN",
+      "failure_rate": "85%"
+    },
+    "resolution_action": {
+      "action_type": "restart_service_and_reset_circuit_breaker",
+      "parameters": {
+        "service_name": "payment-service",
+        "circuit_breaker_reset": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.91,
+      "time_to_resolution": 120,
+      "learned_patterns": [
+        "circuit.*breaker.*open",
+        "payment.*service"
+      ]
+    }
+  },
+  {
+    "incident_type": "timezone_conversion_error",
+    "description": "Daylight saving time causing timestamp inconsistencies",
+    "context": {
+      "service": "analytics-service",
+      "severity": "medium",
+      "error_message": "Timestamp conversion failed: ambiguous time",
+      "timezone": "America/New_York"
+    },
+    "resolution_action": {
+      "action_type": "restart_service_with_timezone_fix",
+      "parameters": {
+        "service_name": "analytics-service",
+        "timezone": "UTC",
+        "force_utc": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.76,
+      "time_to_resolution": 600,
+      "learned_patterns": [
+        "timezone.*error",
+        "daylight.*saving"
+      ]
+    }
+  },
+  {
+    "incident_type": "unicode_encoding_error",
+    "description": "Unicode encoding error in log processing",
+    "context": {
+      "service": "log-processor",
+      "severity": "medium",
+      "error_message": "UnicodeDecodeError: 'utf-8' codec can't decode byte",
+      "file_encoding": "latin-1"
+    },
+    "resolution_action": {
+      "action_type": "restart_service_with_encoding_fix",
+      "parameters": {
+        "service_name": "log-processor",
+        "encoding": "utf-8",
+        "fallback_encoding": "latin-1"
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.83,
+      "time_to_resolution": 180,
+      "learned_patterns": [
+        "UnicodeDecodeError",
+        "encoding.*error"
+      ]
+    }
+  },
+  {
+    "incident_type": "leap_second_synchronization_issue",
+    "description": "NTP synchronization issues during leap second",
+    "context": {
+      "service": "time-service",
+      "severity": "low",
+      "error_message": "Clock synchronization drift detected",
+      "time_drift": "2.5 seconds"
+    },
+    "resolution_action": {
+      "action_type": "restart_ntp_service",
+      "parameters": {
+        "force_sync": true,
+        "ntp_servers": [
+          "pool.ntp.org"
+        ]
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.95,
+      "time_to_resolution": 60,
+      "learned_patterns": [
+        "leap.*second",
+        "time.*sync"
+      ]
+    }
+  },
+  {
+    "incident_type": "memory_fragmentation_issue",
+    "description": "Memory fragmentation causing allocation failures",
+    "context": {
+      "service": "data-processor",
+      "severity": "medium",
+      "error_message": "Cannot allocate memory: fragmentation too high",
+      "fragmentation_level": "78%"
+    },
+    "resolution_action": {
+      "action_type": "restart_service_with_memory_optimization",
+      "parameters": {
+        "service_name": "data-processor",
+        "memory_optimization": true,
+        "gc_settings": "aggressive"
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.88,
+      "time_to_resolution": 200,
+      "learned_patterns": [
+        "memory.*fragment",
+        "allocation.*fail"
+      ]
+    }
+  },
+  {
+    "incident_type": "cosmic_ray_bit_flip",
+    "description": "Rare memory corruption due to cosmic ray bit flip",
+    "context": {
+      "service": "critical-calculation-service",
+      "severity": "critical",
+      "error_message": "Checksum validation failed: data corruption detected",
+      "corruption_type": "single_bit_flip"
+    },
+    "resolution_action": {
+      "action_type": "restart_service_with_ecc_validation",
+      "parameters": {
+        "service_name": "critical-calculation-service",
+        "enable_ecc": true,
+        "memory_test": true
+      }
+    },
+    "outcome": "success",
+    "feedback": {
+      "effectiveness": 0.99,
+      "time_to_resolution": 900,
+      "learned_patterns": [
+        "cosmic.*ray",
+        "bit.*flip",
+        "data.*corruption"
+      ]
+    }
+  }
+]

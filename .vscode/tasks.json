@@ -1,0 +1,18 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start AI On-Call Agent",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-m",
+				"src.main",
+				"--dev"
+			],
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

@@ -1,0 +1,168 @@
+{
+  "summary": {
+    "total_tests": 21,
+    "successful_tests": 10,
+    "failed_tests": 11,
+    "success_rate": 47.61904761904761
+  },
+  "test_results": [
+    {
+      "test": "Docker Container Restart",
+      "action_type": "restart_service",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Docker restart failed: 503 Server Error for http+docker://localhost/v1.51/services/test-container: Service Unavailable (\"This node is not a swarm manager. Use \"docker swarm init\" or \"docker swarm join\" to connect this node to swarm and try again.\")"
+    },
+    {
+      "test": "Kubernetes Deployment Restart",
+      "action_type": "restart_service",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Kubernetes restart failed: Invalid kube-config file. Expected key current-context in /Users/nickpeachey/.kube/config"
+    },
+    {
+      "test": "Systemctl Service Restart",
+      "action_type": "restart_service",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Systemctl restart failed: Service 'cron' not found or not enabled"
+    },
+    {
+      "test": "DAG Task Restart",
+      "action_type": "restart_airflow_dag",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Airflow API restart failed: Cannot connect to host localhost:8080 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8080, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8080)]"
+    },
+    {
+      "test": "Full DAG Reset",
+      "action_type": "restart_airflow_dag",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Airflow API restart failed: Cannot connect to host localhost:8080 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8080, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8080)]"
+    },
+    {
+      "test": "DAG Trigger",
+      "action_type": "restart_airflow_dag",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Airflow API restart failed: Cannot connect to host localhost:8080 ssl:default [Multiple exceptions: [Errno 61] Connect call failed ('::1', 8080, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 8080)]"
+    },
+    {
+      "test": "Spark Application Restart",
+      "action_type": "restart_spark_job",
+      "success": true,
+      "status": "success",
+      "details": "Status: ActionStatus.SUCCESS"
+    },
+    {
+      "test": "Spark Session Creation",
+      "action_type": "restart_spark_job",
+      "success": true,
+      "status": "success",
+      "details": "Status: ActionStatus.SUCCESS"
+    },
+    {
+      "test": "GET Request",
+      "action_type": "call_api_endpoint",
+      "success": true,
+      "status": "success",
+      "details": "Status: ActionStatus.SUCCESS"
+    },
+    {
+      "test": "POST Request with JSON",
+      "action_type": "call_api_endpoint",
+      "success": true,
+      "status": "success",
+      "details": "Status: ActionStatus.SUCCESS"
+    },
+    {
+      "test": "Authenticated Request",
+      "action_type": "call_api_endpoint",
+      "success": true,
+      "status": "success",
+      "details": "Status: ActionStatus.SUCCESS"
+    },
+    {
+      "test": "Kubernetes Deployment Scaling",
+      "action_type": "scale_resources",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Kubernetes scaling failed: Invalid kube-config file. Expected key current-context in /Users/nickpeachey/.kube/config"
+    },
+    {
+      "test": "Docker Swarm Service Scaling",
+      "action_type": "scale_resources",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Docker scaling failed: 503 Server Error for http+docker://localhost/v1.51/services/test-service: Service Unavailable (\"This node is not a swarm manager. Use \"docker swarm init\" or \"docker swarm join\" to connect this node to swarm and try again.\")"
+    },
+    {
+      "test": "Redis Cache Clear",
+      "action_type": "clear_cache",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: Redis cache clear failed: Error 61 connecting to localhost:6379. Connection refused."
+    },
+    {
+      "test": "Filesystem Cache Clear",
+      "action_type": "clear_cache",
+      "success": true,
+      "status": "success",
+      "details": "Status: ActionStatus.SUCCESS"
+    },
+    {
+      "test": "PostgreSQL Connection Test",
+      "action_type": "restart_database_connection",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: PostgreSQL connection restart failed: connection to server at \"localhost\" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at \"localhost\" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n"
+    },
+    {
+      "test": "MongoDB Connection Test",
+      "action_type": "restart_database_connection",
+      "success": false,
+      "status": "failed",
+      "details": "Status: ActionStatus.FAILED, Error: MongoDB connection restart failed: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 5.0s, Topology Description: <TopologyDescription id: 6889db5e74cb9341b11de082, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>"
+    },
+    {
+      "test": "Invalid Service Name",
+      "action_type": "restart_service",
+      "success": true,
+      "status": "failed",
+      "details": "Expected failure: ActionStatus.FAILED"
+    },
+    {
+      "test": "Invalid DAG ID",
+      "action_type": "restart_airflow_dag",
+      "success": true,
+      "status": "failed",
+      "details": "Expected failure: ActionStatus.FAILED"
+    },
+    {
+      "test": "Invalid URL",
+      "action_type": "call_api_endpoint",
+      "success": true,
+      "status": "failed",
+      "details": "Expected failure: ActionStatus.FAILED"
+    },
+    {
+      "test": "Concurrent Actions",
+      "success": true,
+      "details": "5/5 actions completed"
+    }
+  ],
+  "failed_tests": [
+    "Docker Container Restart",
+    "Kubernetes Deployment Restart",
+    "Systemctl Service Restart",
+    "DAG Task Restart",
+    "Full DAG Reset",
+    "DAG Trigger",
+    "Kubernetes Deployment Scaling",
+    "Docker Swarm Service Scaling",
+    "Redis Cache Clear",
+    "PostgreSQL Connection Test",
+    "MongoDB Connection Test"
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "incidents": [
+    {
+      "incident_id": "test_incident_1_1773",
+      "timestamp": "2025-07-30T08:15:02.205275",
+      "actions_taken": [
+        {
+          "action": "restart_dag_task",
+          "target": "data_pipeline.transform_data",
+          "dag_id": "data_pipeline",
+          "dag_run_id": "dag_run_20241201_083000",
+          "task_id": "transform_data",
+          "result": "success",
+          "timestamp": "2024-12-01T08:32:15Z",
+          "duration": 45
+        }
+      ],
+      "success": true,
+      "resolution_time": 90,
+      "confidence_score": 0.85,
+      "learning_feedback": {
+        "confidence_score": 0.85,
+        "resolution_effectiveness": 0.975,
+        "knowledge_base_updated": false,
+        "new_patterns_learned": [
+          "fast_resolution_pattern"
+        ],
+        "performance_metrics": {
+          "resolution_faster_than_average": false,
+          "action_sequence_optimal": true,
+          "resource_usage_efficient": true
+        },
+        "similar_incidents_count": 0,
+        "pattern_match_strength": 0.5,
+        "action_sequence_effectiveness": 1.0
+      }
+    },
+    {
+      "incident_id": "test_incident_2_1773",
+      "timestamp": "2025-07-30T08:15:02.708756",
+      "actions_taken": [
+        {
+          "action": "increase_connection_pool",
+          "target": "prod-db.company.com:5432",
+          "host": "prod-db.company.com",
+          "port": 5432,
+          "pool_size_before": 20,
+          "pool_size_after": 40,
+          "result": "failed",
+          "timestamp": "2024-12-01T09:15:30Z",
+          "duration": 120
+        },
+        {
+          "action": "restart_application_pool",
+          "target": "web-app",
+          "result": "success",
+          "timestamp": "2024-12-01T09:17:45Z",
+          "duration": 180
+        }
+      ],
+      "success": true,
+      "resolution_time": 450,
+      "confidence_score": 0.72,
+      "learning_feedback": {
+        "confidence_score": 0.72,
+        "resolution_effectiveness": 0.875,
+        "knowledge_base_updated": false,
+        "new_patterns_learned": [],
+        "performance_metrics": {
+          "resolution_faster_than_average": false,
+          "action_sequence_optimal": true,
+          "resource_usage_efficient": true
+        },
+        "similar_incidents_count": 1,
+        "pattern_match_strength": 1.0,
+        "action_sequence_effectiveness": 0.5
+      }
+    },
+    {
+      "incident_id": "test_incident_3_1774",
+      "timestamp": "2025-07-30T08:15:03.216622",
+      "actions_taken": [
+        {
+          "action": "increase_executor_memory",
+          "target": "app-20241201083045-0001",
+          "application_id": "app-20241201083045-0001",
+          "memory_before": "4g",
+          "memory_after": "8g",
+          "result": "failed",
+          "timestamp": "2024-12-01T10:20:15Z",
+          "duration": 300
+        },
+        {
+          "action": "restart_with_more_memory",
+          "target": "spark-etl-job-20241201",
+          "application_id": "app-20241201103045-0002",
+          "executor_memory": "8g",
+          "driver_memory": "4g",
+          "result": "success",
+          "timestamp": "2024-12-01T10:25:30Z",
+          "duration": 600
+        }
+      ],
+      "success": true,
+      "resolution_time": 1200,
+      "confidence_score": 0.68,
+      "learning_feedback": {
+        "confidence_score": 0.68,
+        "resolution_effectiveness": 0.6666666666666667,
+        "knowledge_base_updated": false,
+        "new_patterns_learned": [],
+        "performance_metrics": {
+          "resolution_faster_than_average": false,
+          "action_sequence_optimal": true,
+          "resource_usage_efficient": true
+        },
+        "similar_incidents_count": 2,
+        "pattern_match_strength": 1.0,
+        "action_sequence_effectiveness": 0.5
+      }
+    },
+    {
+      "incident_id": "test_incident_1_1839",
+      "timestamp": "2025-07-30T08:16:07.849684",
+      "actions_taken": [
+        {
+          "action": "restart_dag_task",
+          "target": "data_pipeline.transform_data",
+          "dag_id": "data_pipeline",
+          "dag_run_id": "dag_run_20241201_083000",
+          "task_id": "transform_data",
+          "result": "success",
+          "timestamp": "2024-12-01T08:32:15Z",
+          "duration": 45
+        }
+      ],
+      "success": true,
+      "resolution_time": 90,
+      "confidence_score": 0.85,
+      "learning_feedback": {
+        "confidence_score": 0.85,
+        "resolution_effectiveness": 0.975,
+        "knowledge_base_updated": false,
+        "new_patterns_learned": [
+          "fast_resolution_pattern"
+        ],
+        "performance_metrics": {
+          "resolution_faster_than_average": true,
+          "action_sequence_optimal": true,
+          "resource_usage_efficient": true
+        },
+        "similar_incidents_count": 3,
+        "pattern_match_strength": 1.0,
+        "action_sequence_effectiveness": 1.0
+      }
+    },
+    {
+      "incident_id": "test_incident_2_1839",
+      "timestamp": "2025-07-30T08:16:08.353122",
+      "actions_taken": [
+        {
+          "action": "increase_connection_pool",
+          "target": "prod-db.company.com:5432",
+          "host": "prod-db.company.com",
+          "port": 5432,
+          "pool_size_before": 20,
+          "pool_size_after": 40,
+          "result": "failed",
+          "timestamp": "2024-12-01T09:15:30Z",
+          "duration": 120
+        },
+        {
+          "action": "restart_application_pool",
+          "target": "web-app",
+          "result": "success",
+          "timestamp": "2024-12-01T09:17:45Z",
+          "duration": 180
+        }
+      ],
+      "success": true,
+      "resolution_time": 450,
+      "confidence_score": 0.72,
+      "learning_feedback": {
+        "confidence_score": 0.72,
+        "resolution_effectiveness": 0.875,
+        "knowledge_base_updated": false,
+        "new_patterns_learned": [],
+        "performance_metrics": {
+          "resolution_faster_than_average": true,
+          "action_sequence_optimal": true,
+          "resource_usage_efficient": true
+        },
+        "similar_incidents_count": 4,
+        "pattern_match_strength": 1.0,
+        "action_sequence_effectiveness": 0.5
+      }
+    },
+    {
+      "incident_id": "test_incident_3_1840",
+      "timestamp": "2025-07-30T08:16:08.863155",
+      "actions_taken": [
+        {
+          "action": "increase_executor_memory",
+          "target": "app-20241201083045-0001",
+          "application_id": "app-20241201083045-0001",
+          "memory_before": "4g",
+          "memory_after": "8g",
+          "result": "failed",
+          "timestamp": "2024-12-01T10:20:15Z",
+          "duration": 300
+        },
+        {
+          "action": "restart_with_more_memory",
+          "target": "spark-etl-job-20241201",
+          "application_id": "app-20241201103045-0002",
+          "executor_memory": "8g",
+          "driver_memory": "4g",
+          "result": "success",
+          "timestamp": "2024-12-01T10:25:30Z",
+          "duration": 600
+        }
+      ],
+      "success": true,
+      "resolution_time": 1200,
+      "confidence_score": 0.68,
+      "learning_feedback": {
+        "confidence_score": 0.68,
+        "resolution_effectiveness": 0.6666666666666667,
+        "knowledge_base_updated": false,
+        "new_patterns_learned": [],
+        "performance_metrics": {
+          "resolution_faster_than_average": false,
+          "action_sequence_optimal": true,
+          "resource_usage_efficient": true
+        },
+        "similar_incidents_count": 5,
+        "pattern_match_strength": 1.0,
+        "action_sequence_effectiveness": 0.5
+      }
+    }
+  ],
+  "metadata": {
+    "last_updated": "2025-07-30T08:16:08.864108",
+    "total_incidents": 6
+  }
+}
