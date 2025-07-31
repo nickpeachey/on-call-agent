@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     api_port: int = 8000
     access_token_expire_minutes: int = 30
     test_mode: bool = False
+    local_dev: bool = False  # Flag for local development mode
     
     # Database
     database_url: str = Field(default="sqlite:///./data/oncall_agent.db", description="Database connection URL")

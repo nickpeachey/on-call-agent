@@ -35,14 +35,13 @@ def create_enhanced_incidents_router() -> APIRouter:
         service: EnhancedIncidentService = Depends(get_incident_service)
     ):
         """
-        Create incident from Airflow DAG failure with AI analysis.
+        Create incident from Airflow DAG failure with AI analysis and async resolution.
         
         This endpoint is designed to be called by Airflow when a DAG fails.
         It will:
         1. Create the incident in the database
-        2. Analyze with AI to determine if auto-resolution is possible
-        3. Execute recommended actions if confidence is high enough
-        4. Return incident details and action IDs
+        2. Trigger async AI analysis and action execution in background
+        3. Return immediately with incident ID and execution status
         """
         try:
             logger.info("🚨 NEW INCIDENT FROM AIRFLOW", 
@@ -50,21 +49,12 @@ def create_enhanced_incidents_router() -> APIRouter:
                        severity=request_data.severity,
                        auto_resolve=auto_resolve)
             
-            incident, action_ids = await service.create_incident_from_airflow(
+            # Create incident and trigger async resolution
+            result = await service.create_incident_with_async_resolution(
                 request_data, auto_resolve=auto_resolve
             )
             
-            response = {
-                "incident": incident.dict(),
-                "action_ids": action_ids,
-                "auto_resolution_attempted": auto_resolve and len(action_ids) > 0,
-                "message": "Incident created successfully"
-            }
-            
-            if action_ids:
-                response["message"] += f" with {len(action_ids)} automated actions triggered"
-            
-            return response
+            return result
             
         except Exception as e:
             logger.error("❌ FAILED TO CREATE INCIDENT", error=str(e))
@@ -227,7 +217,14 @@ def create_enhanced_incidents_router() -> APIRouter:
                 context=IncidentContext(
                     service_name=dag_id,
                     environment=environment,
-                    component=task_id
+                    component=task_id,
+                    tags=[],
+                    region=None,
+                    version=None,
+                    deployment_id=None,
+                    user_impact=None,
+                    business_impact=None,
+                    metrics=None
                 ),
                 source="airflow",
                 external_id=f"{dag_id}_{task_id}_{webhook_data.get('execution_date', '')}",

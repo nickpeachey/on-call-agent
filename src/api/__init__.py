@@ -49,6 +49,10 @@ def create_api_router() -> APIRouter:
     router.include_router(create_enhanced_incidents_router(), prefix="/enhanced-incidents", tags=["Enhanced Incidents"])
     router.include_router(create_legacy_incidents_router(), prefix="/incidents", tags=["Legacy Incidents"])
     
+    # Include testing endpoints
+    from .testing_clean import router as testing_router
+    router.include_router(testing_router, tags=["Testing & Demo"])
+    
     # Include other routers
     router.include_router(create_knowledge_base_router(), prefix="/knowledge", tags=["Knowledge Base"])
     router.include_router(create_actions_router(), prefix="/actions", tags=["Actions"])
