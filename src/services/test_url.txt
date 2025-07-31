@@ -1,0 +1,23 @@
+curl -X POST "http://localhost:8000/api/v1/enhanced-incidents/?auto_resolve=true" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Simple Test DAG Failure - Testing Fallback Logic",
+    "description": "Testing the enhanced incident service with simple_test_dag to verify our fallback DAG selection logic works correctly",
+    "severity": "medium",
+    "category": "airflow_dag",
+    "metadata": {
+      "dag_id": "simple_test_dag",
+      "task_id": "hello_task",
+      "execution_date": "2024-01-01T00:00:00Z",
+      "retry_count": 3,
+      "max_retries": 5,
+      "category": "airflow_dag",
+      "source": "test_fallback_logic",
+      "environment": "development"
+    },
+    "context": {
+      "service_name": "simple_test_dag",
+      "environment": "development",
+      "tags": ["test", "simple", "fallback_test"]
+    }
+  }'
