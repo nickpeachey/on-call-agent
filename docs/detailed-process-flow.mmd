@@ -1,0 +1,83 @@
+flowchart TD
+    %% External Sources
+    A1[📁 Log Files] --> B1[📊 Log Poller]
+    A2[🎬 Demo Logs] --> B1
+    A3[📋 Application Logs] --> B1
+    
+    %% Log Monitoring
+    B1 --> C1[🔍 Log Monitor Service]
+    C1 --> C2[🎯 Pattern Matching Engine]
+    C2 --> C3{🚨 Alert Pattern<br/>Detected?}
+    
+    %% Pattern Examples
+    C3 -->|Yes| D1[📝 Create Incident Data]
+    C3 -->|No| C1
+    
+    %% AI Decision Engine
+    D1 --> E1[📥 Queue for AI Analysis]
+    E1 --> E2[🔥 AI Decision Loop<br/>2s polling]
+    E2 --> E3[🔬 Incident Analysis]
+    E3 --> E4[📚 Knowledge Base Query]
+    E4 --> E5[🧮 Confidence Calculation]
+    E5 --> E6{🎯 Confidence ≥ 0.60?}
+    
+    %% Automation Decision
+    E6 -->|Yes<br/>Confidence: 0.60+| F1[🤖 Automated Resolution]
+    E6 -->|No<br/>Confidence: <0.60| G1[👨‍💻 Manual Intervention Alert]
+    
+    %% Action Execution
+    F1 --> F2[🔧 Execute Actions]
+    F2 --> F3[📋 Action 1: Restart Service]
+    F2 --> F4[📋 Action 2: Scale Resources]
+    F2 --> F5[📋 Action 3: Restart DB Connection]
+    F2 --> F6[📋 Action 4: API Call]
+    
+    %% Action Results
+    F3 --> H1{✅/❌ Success?}
+    F4 --> H2{✅/❌ Success?}
+    F5 --> H3{✅/❌ Success?}
+    F6 --> H4{✅/❌ Success?}
+    
+    %% Result Aggregation
+    H1 --> I1[📊 Calculate Final Result]
+    H2 --> I1
+    H3 --> I1
+    H4 --> I1
+    
+    %% Final Outcomes
+    I1 --> J1{📈 All Actions Successful?}
+    J1 -->|All Success| K1[🎉 Full Success<br/>Incident Resolved]
+    J1 -->|Some Failed| K2[⚠️ Partial Success<br/>Manual Review Required]
+    J1 -->|All Failed| K3[❌ Complete Failure<br/>Escalate to Human]
+    
+    %% Manual Path
+    G1 --> K4[🚨 Human Intervention<br/>Required]
+    K3 --> K4
+    
+    %% Feedback Loop
+    K1 --> L1[📈 Update Knowledge Base]
+    K2 --> L1
+    K4 --> L1
+    L1 --> E4
+    
+    %% Real Examples
+    M1[Example 1:<br/>DB Connection Error<br/>Confidence: 0.83] --> M2[✅ Actions: Restart DB + Service<br/>Result: Full Success]
+    
+    N1[Example 2:<br/>Out of Memory Error<br/>Confidence: 0.81] --> N2[⚠️ Actions: Restart Service ❌ + Scale ✅<br/>Result: Partial Success]
+    
+    O1[Example 3:<br/>Airflow Task Failure<br/>Confidence: 0.38] --> O2[👨‍💻 Below Threshold<br/>Result: Manual Intervention]
+    
+    %% Styling
+    classDef success fill:#d4edda,stroke:#155724,stroke-width:2px
+    classDef warning fill:#fff3cd,stroke:#856404,stroke-width:2px
+    classDef danger fill:#f8d7da,stroke:#721c24,stroke-width:2px
+    classDef info fill:#d1ecf1,stroke:#0c5460,stroke-width:2px
+    classDef automation fill:#e7f3ff,stroke:#004085,stroke-width:2px
+    
+    class K1 success
+    class K2,G1 warning
+    class K3,K4 danger
+    class E2,E3,F1 automation
+    class M2 success
+    class N2 warning
+    class O2 danger

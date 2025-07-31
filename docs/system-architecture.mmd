@@ -1,0 +1,49 @@
+graph TB
+    subgraph "External Sources"
+        A[Log Files] --> B[Log Poller]
+        C[Demo Logs] --> B
+        D[Application Logs] --> B
+    end
+    
+    subgraph "Log Monitoring Layer"
+        B --> E[Log Monitor Service]
+        E --> F[Pattern Matching Engine]
+        F --> G{Alert Pattern<br/>Detected?}
+    end
+    
+    subgraph "AI Decision Engine"
+        G -->|Yes| H[Create Incident]
+        H --> I[Queue for AI Analysis]
+        I --> J[AI Decision Loop]
+        J --> K[Incident Analysis]
+        K --> L[Knowledge Base Query]
+        L --> M[Confidence Calculation]
+        M --> N{Confidence ≥ 0.60?}
+    end
+    
+    subgraph "Action Execution Layer"
+        N -->|Yes| O[Automated Resolution]
+        O --> P[Execute Actions]
+        P --> Q[Action Results]
+        Q --> R{All Actions<br/>Successful?}
+        
+        N -->|No| S[Manual Intervention Alert]
+    end
+    
+    subgraph "Resolution Outcomes"
+        R -->|Yes| T[✅ Full Success]
+        R -->|Partial| U[⚠️ Partial Success]
+        R -->|No| V[❌ Failed - Escalate]
+        
+        T --> W[Incident Resolved]
+        U --> X[Manual Review Required]
+        V --> Y[Human Intervention]
+        S --> Y
+    end
+    
+    subgraph "Feedback Loop"
+        W --> Z[Update Knowledge Base]
+        X --> Z
+        Y --> Z
+        Z --> L
+    end

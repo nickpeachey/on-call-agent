@@ -1,5 +1,113 @@
-{
-  "version": "1.0",
-  "last_updated": "2025-07-30T14:13:53.546495+00:00",
-  "entries": []
-}
+[
+  {
+    "id": "kb_spark_oom",
+    "title": "Spark Out of Memory Error",
+    "description": "Spark jobs failing due to out of memory errors in executors",
+    "category": "performance",
+    "tags": [
+      "spark",
+      "memory",
+      "oom",
+      "bigdata"
+    ],
+    "error_patterns": [
+      "java.lang.OutOfMemoryError",
+      "spark.sql.execution.OutOfMemoryError",
+      "Container killed by YARN"
+    ],
+    "solution_steps": [
+      "Increase executor memory (spark.executor.memory)",
+      "Optimize data partitioning",
+      "Check for data skew",
+      "Restart Spark job with adjusted parameters"
+    ],
+    "automated_actions": [
+      "restart_service",
+      "adjust_memory_config"
+    ],
+    "success_rate": 0.85,
+    "related_services": [
+      "spark",
+      "yarn",
+      "hdfs"
+    ],
+    "last_used": "2025-07-31T09:17:07.889191",
+    "created_at": "2025-07-31T09:17:07.889195",
+    "updated_at": "2025-07-31T09:17:07.889195",
+    "created_by": "system"
+  },
+  {
+    "id": "kb_airflow_timeout",
+    "title": "Airflow Task Timeout",
+    "description": "Airflow tasks timing out due to long-running operations",
+    "category": "orchestration",
+    "tags": [
+      "airflow",
+      "timeout",
+      "dag",
+      "workflow"
+    ],
+    "error_patterns": [
+      "AirflowTaskTimeout",
+      "Task timed out",
+      "DagRun timeout"
+    ],
+    "solution_steps": [
+      "Increase task timeout configuration",
+      "Check downstream dependencies",
+      "Optimize task execution",
+      "Consider task splitting"
+    ],
+    "automated_actions": [
+      "restart_task",
+      "adjust_timeout"
+    ],
+    "success_rate": 0.78,
+    "related_services": [
+      "airflow",
+      "scheduler",
+      "executor"
+    ],
+    "last_used": "2025-07-31T09:17:07.889197",
+    "created_at": "2025-07-31T09:17:07.889197",
+    "updated_at": "2025-07-31T09:17:07.889198",
+    "created_by": "system"
+  },
+  {
+    "id": "kb_db_connection",
+    "title": "Database Connection Pool Exhausted",
+    "description": "Database connection pool exhausted leading to connection failures",
+    "category": "database",
+    "tags": [
+      "database",
+      "connection",
+      "pool",
+      "timeout"
+    ],
+    "error_patterns": [
+      "connection pool exhausted",
+      "psycopg2.OperationalError",
+      "Connection refused"
+    ],
+    "solution_steps": [
+      "Restart application to reset connection pool",
+      "Check database server status",
+      "Increase connection pool size",
+      "Optimize connection usage"
+    ],
+    "automated_actions": [
+      "restart_service",
+      "health_check"
+    ],
+    "success_rate": 0.92,
+    "related_services": [
+      "postgresql",
+      "mysql",
+      "application"
+    ],
+    "last_used": "2025-07-31T09:17:07.889199",
+    "created_at": "2025-07-31T09:17:07.889199",
+    "updated_at": "2025-07-31T09:17:07.889200",
+    "created_by": "system"
+  }
+]

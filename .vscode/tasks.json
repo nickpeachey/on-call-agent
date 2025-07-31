@@ -2,17 +2,14 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Start AI On-Call Agent",
+			"label": "Build and Run Application",
 			"type": "shell",
-			"command": "python",
-			"args": [
-				"-m",
-				"src.main",
-				"--dev"
-			],
+			"command": "docker-compose up --build",
 			"group": "build",
 			"isBackground": true,
-			"problemMatcher": []
+			"problemMatcher": [
+				"$docker-compose"
+			]
 		}
 	]
 }

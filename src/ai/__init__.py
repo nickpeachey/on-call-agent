@@ -27,6 +27,7 @@ from ..core import get_logger, settings
 from ..models.schemas import LogEntry, IncidentCreate, ActionCreate
 from ..services.knowledge_base import KnowledgeBaseEntry
 from ..services.action_logger import action_logger
+from ..services.ml_service import MLService
 from ..database import get_db_session, Base
 from sqlalchemy.orm import Session
 from sqlalchemy import text, Column, String, Float, Boolean, DateTime, JSON
@@ -65,6 +66,9 @@ class AIDecisionEngine:
         self.knowledge_base_service = None  # Will be injected
         self.action_service = None  # Will be injected
         
+        # ML Service integration
+        self.ml_service = MLService()
+        
         # ML Models
         self.incident_classifier = None
         self.confidence_model = None
@@ -98,6 +102,10 @@ class AIDecisionEngine:
         """Start the AI decision engine."""
         if not self.is_running:
             self.is_running = True
+            
+            # Initialize ML service
+            await self.ml_service.initialize()
+            logger.info("🤖 ML Service initialized")
             
             # Try to load existing trained models first
             model_path = "models/ai_decision_engine.pkl"

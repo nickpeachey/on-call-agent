@@ -1,60 +1,57 @@
 [
   {
-    "incident_type": "airflow_task_failure",
-    "description": "Airflow DAG 'data_pipeline' task 'extract_data' failed",
-    "context": {
-      "service": "airflow",
-      "severity": "high",
+    "incident": "Airflow DAG data_pipeline task extract_data failed with exit code 1",
+    "severity": "high",
+    "action": "restart_dag",
+    "confidence": 0.95,
+    "category": "airflow_task_failure",
+    "infrastructure": {
       "dag_id": "data_pipeline",
       "task_id": "extract_data",
-      "error_message": "Task failed with exit code 1"
+      "dag_run_id": "scheduled__2025-07-31T00:00:00+00:00",
+      "execution_date": "2025-07-31",
+      "server_name": "airflow-prod-01",
+      "ip_address": "10.1.1.10",
+      "airflow_url": "http://10.1.1.10:8080",
+      "worker_node": "airflow-worker-01",
+      "pool": "default_pool",
+      "queue": "celery"
     },
-    "resolution_action": {
-      "action_type": "restart_airflow_task",
-      "parameters": {
-        "dag_id": "data_pipeline",
-        "task_id": "extract_data",
-        "clear_downstream": true
-      }
-    },
-    "outcome": "success",
-    "feedback": {
-      "effectiveness": 0.95,
-      "time_to_resolution": 120,
-      "learned_patterns": [
-        "airflow.*failed",
-        "task.*extract_data"
-      ]
+    "context": {
+      "service": "airflow",
+      "error_code": "1",
+      "retry_count": 0,
+      "max_retries": 3,
+      "duration": 120,
+      "log_url": "http://10.1.1.10:8080/log?dag_id=data_pipeline&task_id=extract_data&execution_date=2025-07-31"
     }
   },
   {
-    "incident_type": "spark_application_failure",
-    "description": "Spark application failed due to executor lost",
+    "incident": "Spark job customer_segmentation executor lost worker contact",
+    "severity": "high",
+    "action": "scale_up",
+    "confidence": 0.88,
+    "category": "spark_application_failure",
+    "infrastructure": {
+      "application_id": "app-20250731120000-0001",
+      "application_name": "customer_segmentation",
+      "server_name": "spark-master-01",
+      "ip_address": "10.1.2.10",
+      "master_url": "spark://10.1.2.10:7077",
+      "spark_ui_url": "http://10.1.2.10:4040",
+      "executor_count": 4,
+      "driver_memory": "4g",
+      "executor_memory": "8g",
+      "cores_per_executor": 4
+    },
     "context": {
       "service": "spark",
-      "severity": "high",
-      "application_id": "app-20240730120000-0001",
-      "error_message": "Spark executor lost: Worker lost contact"
-    },
-    "resolution_action": {
-      "action_type": "restart_spark_job",
-      "parameters": {
-        "application_id": "app-20240730120000-0001",
-        "force_kill": true,
-        "memory_config": {
-          "driver_memory": "4g",
-          "executor_memory": "8g"
-        }
-      }
-    },
-    "outcome": "success",
-    "feedback": {
-      "effectiveness": 0.88,
-      "time_to_resolution": 180,
-      "learned_patterns": [
-        "spark.*failed",
-        "executor.*lost"
-      ]
+      "stage_id": 15,
+      "task_id": 1234,
+      "attempt_id": 1,
+      "partition_id": 42,
+      "executor_id": "executor_2",
+      "rdd_id": 25
     }
   },
   {

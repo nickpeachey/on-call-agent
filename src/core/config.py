@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     confidence_threshold: float = 0.7
     max_automation_actions: int = 5
     enable_risk_assessment: bool = True
+    ml_model_path: str = Field(default="models", description="Directory path for ML model storage")
     
     # Airflow Integration
     airflow_base_url: str = "http://localhost:8080"
