@@ -673,6 +673,22 @@ class EnhancedIncidentService:
         """Store incident in database."""
         async for session in get_db_session():
             try:
+                # Prepare metadata by merging existing metadata with incident metadata
+                metadata_dict = {}
+                
+                # Start with existing metadata if any
+                if incident.metadata:
+                    metadata_dict.update(incident.metadata)
+                
+                # Add or override with incident-specific fields
+                metadata_dict.update({
+                    "category": incident.category.value if incident.category else None,
+                    "source": incident.source,
+                    "external_id": incident.external_id,
+                    "ai_confidence": incident.ai_confidence,
+                    "predicted_resolution_time": incident.predicted_resolution_time
+                })
+                
                 # Convert IncidentResponse to database format
                 incident_data = {
                     "id": incident.id,
@@ -687,15 +703,7 @@ class EnhancedIncidentService:
                     "resolved_at": incident.resolved_at,
                     "resolution_notes": None,
                     "actions_taken": [],
-                    "metadata": {
-                        "category": incident.category.value if incident.category else None,
-                        "dag_id": incident.metadata.get("dag_id") if incident.metadata else None,
-                        "task_id": incident.metadata.get("task_id") if incident.metadata else None,
-                        "source": incident.source,
-                        "external_id": incident.external_id,
-                        "ai_confidence": incident.ai_confidence,
-                        "predicted_resolution_time": incident.predicted_resolution_time
-                    }
+                    "metadata": json.dumps(metadata_dict)
                 }
                 
                 # Insert incident into database
@@ -726,6 +734,22 @@ class EnhancedIncidentService:
         """Update incident in database."""
         async for session in get_db_session():
             try:
+                # Prepare metadata by merging existing metadata with incident metadata
+                metadata_dict = {}
+                
+                # Start with existing metadata if any
+                if incident.metadata:
+                    metadata_dict.update(incident.metadata)
+                
+                # Add or override with incident-specific fields
+                metadata_dict.update({
+                    "category": incident.category.value if incident.category else None,
+                    "source": incident.source,
+                    "external_id": incident.external_id,
+                    "ai_confidence": incident.ai_confidence,
+                    "predicted_resolution_time": incident.predicted_resolution_time
+                })
+                
                 # Update incident in database
                 await session.execute(
                     text("""
@@ -747,15 +771,7 @@ class EnhancedIncidentService:
                         "status": incident.status.value,
                         "updated_at": incident.updated_at,
                         "resolved_at": incident.resolved_at,
-                        "metadata": {
-                            "category": incident.category.value if incident.category else None,
-                            "dag_id": incident.metadata.get("dag_id") if incident.metadata else None,
-                            "task_id": incident.metadata.get("task_id") if incident.metadata else None,
-                            "source": incident.source,
-                            "external_id": incident.external_id,
-                            "ai_confidence": incident.ai_confidence,
-                            "predicted_resolution_time": incident.predicted_resolution_time
-                        }
+                        "metadata": json.dumps(metadata_dict)
                     }
                 )
                 

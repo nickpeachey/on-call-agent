@@ -1,0 +1,16 @@
+{
+  "incident_classifier": {
+    "loaded": true,
+    "accuracy": 0.7,
+    "trained_at": "2025-07-31T10:16:01.732504+00:00",
+    "training_samples": 2000,
+    "features": 500
+  },
+  "action_recommender": {
+    "loaded": true,
+    "accuracy": 0.7975,
+    "trained_at": "2025-07-31T10:16:01.732512+00:00",
+    "training_samples": 2000,
+    "features": 500
+  }
+}

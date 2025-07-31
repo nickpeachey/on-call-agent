@@ -311,32 +311,30 @@ class AIDecisionEngine:
             logger.info("🔬 Starting incident analysis", title=incident.title)
         
         try:
-            # Use ML models if available
-            if self.incident_classifier and self.confidence_model:
-                # ML-based analysis
-                root_cause_category, category_confidence = self.predict_incident_category(incident)
-                resolution_confidence = self.predict_resolution_confidence(incident)
-                anomaly_info = self.detect_anomalies(incident)
-                
-                ml_analysis = {
-                    "root_cause_category": root_cause_category,
-                    "category_confidence": category_confidence,
-                    "affected_components": self._extract_affected_components(incident),
-                    "error_patterns": self._extract_error_patterns(incident),
-                    "recommended_action_types": self._recommend_action_types(incident),
-                    "risk_assessment": self._assess_risk(incident),
-                    "confidence_score": resolution_confidence,
-                    "anomaly_detection": anomaly_info,
-                    "analysis_method": "ml_models",
-                    "analysis_timestamp": datetime.utcnow().isoformat()
-                }
-                
-                logger.info("ML-based incident analysis completed",
-                           category=root_cause_category,
-                           confidence=resolution_confidence,
-                           is_anomaly=anomaly_info.get("is_anomaly", False))
-                
-                return ml_analysis
+            # Use ML Service for predictions (uses saved models from disk)
+            root_cause_category, category_confidence = await self.predict_incident_category(incident)
+            resolution_confidence = self.predict_resolution_confidence(incident)
+            anomaly_info = self.detect_anomalies(incident)
+            
+            ml_analysis = {
+                "root_cause_category": root_cause_category,
+                "category_confidence": category_confidence,
+                "affected_components": self._extract_affected_components(incident),
+                "error_patterns": self._extract_error_patterns(incident),
+                "recommended_action_types": await self._recommend_action_types(incident),
+                "risk_assessment": self._assess_risk(incident),
+                "confidence_score": resolution_confidence,
+                "anomaly_detection": anomaly_info,
+                "analysis_method": "ml_service_models",
+                "analysis_timestamp": datetime.utcnow().isoformat()
+            }
+            
+            logger.info("ML Service incident analysis completed",
+                       category=root_cause_category,
+                       confidence=resolution_confidence,
+                       is_anomaly=anomaly_info.get("is_anomaly", False))
+            
+            return ml_analysis
                 
         except Exception as e:
             logger.error("Error in ML analysis, falling back to rule-based", error=str(e))
@@ -769,8 +767,29 @@ class AIDecisionEngine:
         
         return patterns
     
-    def _recommend_action_types(self, incident: IncidentCreate) -> List[str]:
-        """Recommend action types based on incident analysis."""
+    async def _recommend_action_types(self, incident: IncidentCreate) -> List[str]:
+        """Recommend action types based on incident analysis using ML Service."""
+        try:
+            # Use ML Service for action recommendation (uses saved models)
+            incident_text = f"{incident.title} {incident.description} service:{incident.service}"
+            action, confidence = await self.ml_service.recommend_action(incident_text)
+            
+            # Return the ML-recommended action
+            actions = [action]
+            
+            logger.debug("ML Service action recommendation", 
+                        action=action, confidence=confidence)
+            
+            return actions
+            
+        except Exception as e:
+            logger.warning("ML Service action recommendation failed, using rule-based fallback", 
+                          error=str(e))
+            # Fallback to rule-based approach
+            return self._rule_based_action_recommendations(incident)
+    
+    def _rule_based_action_recommendations(self, incident: IncidentCreate) -> List[str]:
+        """Rule-based action recommendations as fallback."""
         actions = []
         description_lower = incident.description.lower()
         
@@ -1800,17 +1819,12 @@ class AIDecisionEngine:
         
         return results
     
-    def predict_incident_category(self, incident: IncidentCreate) -> Tuple[str, float]:
+    async def predict_incident_category(self, incident: IncidentCreate) -> Tuple[str, float]:
         """Predict incident category using trained ML models.
         
-        Uses the loaded incident_classifier (RandomForestClassifier) to categorize
-        incidents into types like:
-        - database_connectivity: DB connection issues, timeouts
-        - memory_issues: OOM errors, heap problems
-        - workflow_failure: Airflow DAG failures
-        - compute_failure: Spark job failures
-        - data_availability: Missing files, data issues
-        - unknown: Unclassified incidents
+        Uses the ML Service's incident classifier to categorize incidents.
+        This ensures we use the same models that are saved to disk and
+        provides a consistent prediction interface.
         
         Args:
             incident (IncidentCreate): Incident to classify
@@ -1819,63 +1833,36 @@ class AIDecisionEngine:
             Tuple[str, float]: (category, confidence_score)
             
         Fallback:
-            If ML models not loaded, uses rule-based classification with 0.5 confidence
-            If prediction fails, uses rule-based classification with 0.3 confidence
+            If ML Service models not loaded, uses rule-based classification
         """
-        if not self.incident_classifier or not self.feature_vectorizer:
-            # Fallback to rule-based approach
-            return self._determine_root_cause_category(incident), 0.5
-        
+        # Use ML Service for predictions to ensure consistency with saved models
         try:
-            # Extract features
-            features = self._extract_ml_features(incident)
+            # Create text representation for ML Service
+            incident_text = f"{incident.title} {incident.description} service:{incident.service}"
             
-            # Handle prediction-time vectorization separately
-            try:
-                text_content = features.get("text_content", "")
-                if not text_content.strip():
-                    text_content = f"{incident.service} {incident.severity} issue"
-                
-                # Transform using existing vectorizer
-                text_vector_sparse = self.feature_vectorizer.transform([text_content])
-                text_vector = np.array(text_vector_sparse.todense())
-                
-                # Combine with numerical features (same as training)
-                numerical_features = [
-                    features.get("title_length", 0),
-                    features.get("description_length", 0),
-                    features.get("num_tags", 0),
-                    int(features.get("has_timeout", False)),
-                    int(features.get("has_memory_issue", False)),
-                    int(features.get("has_connection_issue", False)),
-                    int(features.get("has_database_issue", False)),
-                    int(features.get("has_spark_issue", False)),
-                    int(features.get("has_airflow_issue", False)),
-                    features.get("num_error_patterns", 0),
-                    features.get("hour_of_day", 0),
-                    features.get("day_of_week", 0),
-                ]
-                
-                X = np.hstack([text_vector, np.array(numerical_features).reshape(1, -1)])
-                
-            except Exception as vec_error:
-                logger.warning(f"Vectorization failed during prediction: {vec_error}")
-                # Use rule-based fallback
-                return self._determine_root_cause_category(incident), 0.3
+            # Use ML Service for prediction (this uses the joblib models from disk)
+            severity, confidence = await self.ml_service.predict_incident_severity(incident_text)
             
-            # Predict category
-            y_pred = self.incident_classifier.predict(X)[0]
-            y_proba = self.incident_classifier.predict_proba(X)[0]
+            # Map severity to category (the ML Service predicts severity, we need category)
+            category_mapping = {
+                "critical": "memory_issues",
+                "high": "workflow_failure", 
+                "medium": "database_connectivity",
+                "low": "data_availability"
+            }
             
-            # Decode label
-            category = self.label_encoders["category"].inverse_transform([y_pred])[0]
-            confidence = float(np.max(y_proba))
+            category = category_mapping.get(severity, self._determine_root_cause_category(incident))
+            
+            logger.debug("ML Service prediction used", 
+                        category=category, confidence=confidence, severity=severity)
             
             return category, confidence
             
         except Exception as e:
-            logger.error("Error predicting incident category", error=str(e))
-            return self._determine_root_cause_category(incident), 0.3
+            logger.warning("ML Service prediction failed, using rule-based fallback", 
+                          error=str(e))
+            # Fallback to rule-based approach
+            return self._determine_root_cause_category(incident), 0.5
     
     def predict_resolution_confidence(self, incident: IncidentCreate) -> float:
         """Predict confidence for automated resolution success.

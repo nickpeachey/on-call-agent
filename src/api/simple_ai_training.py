@@ -8,7 +8,7 @@ from ..core import get_logger
 from ..ai.simple_engine import SimpleAIEngine
 
 logger = get_logger(__name__)
-router = APIRouter(prefix="/api/v1/ai", tags=["AI Training"])
+router = APIRouter(prefix="/ai", tags=["AI Training"])
 
 # Global AI engine instance (will be injected)
 _ai_engine: SimpleAIEngine | None = None
@@ -48,7 +48,7 @@ async def get_model_status() -> Dict[str, Any]:
 
 
 @router.post("/retrain")
-async def retrain_model(min_samples: int = 20) -> Dict[str, Any]:
+async def retrain_model(min_samples: int = 1000) -> Dict[str, Any]:
     """Retrain AI model with latest database data."""
     try:
         ai_engine = get_ai_engine()

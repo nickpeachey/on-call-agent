@@ -211,7 +211,7 @@ class MLService:
                 text("SELECT COUNT(*) FROM incidents WHERE status IN ('resolved', 'closed')")
             )
             action_count = await session.scalar(
-                text("SELECT COUNT(*) FROM action_executions WHERE success IS NOT NULL")
+                text("SELECT COUNT(*) FROM action_executions WHERE status IN ('success', 'failed')")
             )
             
             if incident_count >= 10 and action_count >= 10:

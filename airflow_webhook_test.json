@@ -1,0 +1,12 @@
+{
+  "dag_id": "backup_database_nightly",
+  "task_id": "generate_report",
+  "execution_date": "2025-07-31T03:15:00Z",
+  "state": "failed",
+  "log_url": "http://airflow-prod-01:8080/log/backup_database_nightly/generate_report/2025-07-31T03:15:00Z/1.log",
+  "error_message": "Task instance timeout after 1800 seconds",
+  "context": {
+    "environment": "production",
+    "cluster": "prod-cluster-1"
+  }
+}

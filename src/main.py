@@ -13,6 +13,7 @@ from src.core import settings, setup_logging, get_logger
 from src.api import create_api_router
 from src.monitoring import LogMonitorService
 from src.ai import AIDecisionEngine
+from src.ai.simple_engine import SimpleAIEngine
 from src.actions import ActionEngine
 from src.database import init_database
 from src.services.incidents import IncidentService
@@ -34,6 +35,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     
     # Initialize core services
     ai_engine = AIDecisionEngine()
+    simple_ai_engine = SimpleAIEngine()
     log_monitor = LogMonitorService(ai_engine=ai_engine)
     action_engine = ActionEngine()
     
@@ -44,15 +46,21 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     enhanced_incident_service.set_ai_engine(ai_engine)
     log_poller = LogPoller(incident_service, knowledge_service)
     
+    # Inject simple AI engine into API router
+    from src.api import simple_ai_training
+    simple_ai_training.set_ai_engine(simple_ai_engine)
+    
     # Start background services
     await log_monitor.start()
     await ai_engine.start()
+    await simple_ai_engine.start()
     await action_engine.start()
     await log_poller.start_polling()
     
     # Store services in app state
     app.state.log_monitor = log_monitor
     app.state.ai_engine = ai_engine
+    app.state.simple_ai_engine = simple_ai_engine
     app.state.action_engine = action_engine
     app.state.log_poller = log_poller
     app.state.incident_service = incident_service
@@ -67,6 +75,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Shutting down AI On-Call Agent...")
     await log_poller.stop_polling()
     await action_engine.stop()
+    await simple_ai_engine.stop()
     await ai_engine.stop()
     await log_monitor.stop()
     logger.info("AI On-Call Agent stopped")

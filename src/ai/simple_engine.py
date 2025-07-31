@@ -125,25 +125,24 @@ class SimpleAIEngine:
     async def retrain_from_database(self, min_samples: int = 20) -> Dict[str, Any]:
         """Retrain model using incidents and resolutions from database."""
         try:
-            from ..database import get_database
+            from ..database import get_db_session
             from sqlalchemy import text
             
+            rows = []
             # Get database session
-            db = await get_database()
-            
-            # Query successful incident resolutions
-            query = text("""
-                SELECT i.title, i.description, i.service, i.severity,
-                       r.success, r.resolution_time, r.actions_executed
-                FROM incidents i
-                JOIN incident_resolutions r ON i.id = r.incident_id
-                WHERE r.created_at > datetime('now', '-30 days')
-                ORDER BY r.created_at DESC
-                LIMIT 1000
-            """)
-            
-            result = await db.execute(query)
-            rows = result.fetchall()
+            async for db in get_db_session():
+                # Query all incident resolutions for comprehensive training
+                query = text("""
+                    SELECT i.title, i.description, i.service, i.severity,
+                           r.success, r.resolution_time, r.actions_executed
+                    FROM incidents i
+                    JOIN incident_resolutions r ON i.id = r.incident_id
+                    ORDER BY r.created_at DESC
+                """)
+                
+                result = await db.execute(query)
+                rows = result.fetchall()
+                break  # Exit after first iteration
             
             if len(rows) < min_samples:
                 return {

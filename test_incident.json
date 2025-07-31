@@ -1,0 +1,15 @@
+{
+  "title": "Airflow DAG backup_database_nightly failed - Task generate_report timeout",
+  "description": "The backup_database_nightly DAG failed at 03:15 AM. The generate_report task exceeded the 30-minute timeout limit. Error: Task instance timeout after 1800 seconds. Previous runs were successful until 2 days ago.",
+  "service": "airflow",
+  "severity": "high",
+  "category": "airflow_dag",
+  "metadata": {
+    "dag_name": "backup_database_nightly",
+    "task_name": "generate_report", 
+    "dag_id": "backup_database_nightly_v2",
+    "execution_date": "2025-07-31T03:15:00Z",
+    "error_type": "timeout",
+    "server": "airflow-prod-01"
+  }
+}
