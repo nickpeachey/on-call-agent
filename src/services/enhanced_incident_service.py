@@ -1030,10 +1030,19 @@ class EnhancedIncidentService:
                 
                 # If no actions were generated, add fallback action for Airflow incidents
                 if not ai_decision["actions"] and incident.category == IncidentCategory.AIRFLOW_DAG:
+                    # Try multiple sources for DAG ID in order of preference
+                    dag_id = None
+                    if incident.metadata and incident.metadata.get("dag_id"):
+                        dag_id = incident.metadata.get("dag_id")
+                    elif incident.context and incident.context.service_name:
+                        dag_id = incident.context.service_name
+                    else:
+                        dag_id = os.getenv("DEFAULT_AIRFLOW_DAG", "test_dag_for_oncall_agent")
+                    
                     ai_decision["actions"].append({
                         "action_type": "restart_airflow_dag",
                         "parameters": {
-                            "dag_id": incident.metadata.get("dag_id", "test_dag_for_oncall_agent") if incident.metadata else "test_dag_for_oncall_agent",
+                            "dag_id": dag_id,
                             "service": incident.context.service_name if incident.context else "unknown"
                         },
                         "confidence": 0.8
